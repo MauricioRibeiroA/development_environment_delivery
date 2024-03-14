@@ -1,6 +1,6 @@
-import 'package:stackfood_multivendor/helper/responsive_helper.dart';
-import 'package:stackfood_multivendor/util/dimensions.dart';
-import 'package:stackfood_multivendor/util/styles.dart';
+import 'package:stackfood_multivendor_driver/helper/responsive_helper.dart';
+import 'package:stackfood_multivendor_driver/util/dimensions.dart';
+import 'package:stackfood_multivendor_driver/util/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,10 +11,8 @@ class PaginatedListViewWidget extends StatefulWidget {
   final int? offset;
   final Widget productView;
   final bool enabledPagination;
-  final bool reverse;
   const PaginatedListViewWidget({super.key, required this.scrollController, required this.onPaginate, required this.totalSize,
-    required this.offset, required this.productView, this.enabledPagination = true, this.reverse = false,
-  });
+    required this.offset, required this.productView, this.enabledPagination = true});
 
   @override
   State<PaginatedListViewWidget> createState() => _PaginatedListViewWidgetState();
@@ -75,30 +73,26 @@ class _PaginatedListViewWidgetState extends State<PaginatedListViewWidget> {
       }
     }
 
-    return SingleChildScrollView(
-      child: Column(children: [
+    return Column(children: [
 
-        widget.reverse ? const SizedBox() : widget.productView,
+      widget.productView,
 
-        (ResponsiveHelper.isDesktop(context) && (widget.totalSize == null || _offset! >= (widget.totalSize! / 10).ceil() || _offsetList.contains(_offset!+1))) ? const SizedBox() : Center(child: Padding(
-          padding: (_isLoading || ResponsiveHelper.isDesktop(context)) ? const EdgeInsets.all(Dimensions.paddingSizeSmall) : EdgeInsets.zero,
-          child: _isLoading ? const CircularProgressIndicator() : (ResponsiveHelper.isDesktop(context) && widget.totalSize != null) ? InkWell(
-            onTap: _paginate,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingSizeSmall, horizontal: Dimensions.paddingSizeLarge),
-              margin: ResponsiveHelper.isDesktop(context) ? const EdgeInsets.only(top: Dimensions.paddingSizeSmall) : null,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
-                color: Theme.of(context).primaryColor,
-              ),
-              child: Text('view_more'.tr, style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeLarge, color: Colors.white)),
+      (ResponsiveHelper.isDesktop(context) && (widget.totalSize == null || _offset! >= (widget.totalSize! / 10).ceil() || _offsetList.contains(_offset!+1))) ? const SizedBox() : Center(child: Padding(
+        padding: (_isLoading || ResponsiveHelper.isDesktop(context)) ? const EdgeInsets.all(Dimensions.paddingSizeSmall) : EdgeInsets.zero,
+        child: _isLoading ? const CircularProgressIndicator() : (ResponsiveHelper.isDesktop(context) && widget.totalSize != null) ? InkWell(
+          onTap: _paginate,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingSizeSmall, horizontal: Dimensions.paddingSizeLarge),
+            margin: ResponsiveHelper.isDesktop(context) ? const EdgeInsets.only(top: Dimensions.paddingSizeSmall) : null,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+              color: Theme.of(context).primaryColor,
             ),
-          ) : const SizedBox(),
-        )),
+            child: Text('view_more'.tr, style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeLarge, color: Colors.white)),
+          ),
+        ) : const SizedBox(),
+      )),
 
-        widget.reverse ? widget.productView : const SizedBox(),
-
-      ]),
-    );
+    ]);
   }
 }

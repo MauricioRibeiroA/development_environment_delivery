@@ -1,7 +1,6 @@
-import 'package:stackfood_multivendor/util/dimensions.dart';
-import 'package:stackfood_multivendor/util/styles.dart';
+import 'package:stackfood_multivendor_driver/util/dimensions.dart';
+import 'package:stackfood_multivendor_driver/util/styles.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class CustomButtonWidget extends StatelessWidget {
   final Function? onPressed;
@@ -11,59 +10,43 @@ class CustomButtonWidget extends StatelessWidget {
   final double? height;
   final double? width;
   final double? fontSize;
-  final double radius;
   final IconData? icon;
-  final Color? color;
-  final Color? textColor;
-  final bool isLoading;
-  final bool isBold;
+  final Color? backgroundColor;
+  final Color? fontColor;
+  final double radius;
   const CustomButtonWidget({super.key, this.onPressed, required this.buttonText, this.transparent = false, this.margin, this.width, this.height,
-    this.fontSize, this.radius = 10, this.icon, this.color, this.textColor, this.isLoading = false, this.isBold = true});
+    this.fontSize, this.icon, this.backgroundColor, this.fontColor, this.radius = Dimensions.radiusSmall});
 
   @override
   Widget build(BuildContext context) {
+
     final ButtonStyle flatButtonStyle = TextButton.styleFrom(
       backgroundColor: onPressed == null ? Theme.of(context).disabledColor : transparent
-          ? Colors.transparent : color ?? Theme.of(context).primaryColor,
-      minimumSize: Size(width != null ? width! : Dimensions.webMaxWidth, height != null ? height! : 50),
+          ? Colors.transparent : backgroundColor ?? Theme.of(context).primaryColor,
+      minimumSize: Size(width != null ? width! : 1170, height != null ? height! : 50),
       padding: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(radius),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
     );
 
-    return Center(child: SizedBox(width: width ?? Dimensions.webMaxWidth, child: Padding(
+    return Padding(
       padding: margin == null ? const EdgeInsets.all(0) : margin!,
       child: TextButton(
-        onPressed: isLoading ? null : onPressed as void Function()?,
+        onPressed: onPressed as void Function()?,
         style: flatButtonStyle,
-        child: isLoading ? Center(child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const SizedBox(
-            height: 15, width: 15,
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              strokeWidth: 2,
-            ),
-          ),
-          const SizedBox(width: Dimensions.paddingSizeSmall),
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
 
-          Text('loading'.tr, style: robotoMedium.copyWith(color: Colors.white)),
-        ]),
-        ) : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          icon != null ? Padding(
-            padding: const EdgeInsets.only(right: Dimensions.paddingSizeExtraSmall),
-            child: Icon(icon, color: transparent ? Theme.of(context).primaryColor : Theme.of(context).cardColor),
+          icon != null ? Icon(
+            icon, color: transparent ? Theme.of(context).primaryColor : Theme.of(context).cardColor, size: 20,
           ) : const SizedBox(),
-          Text(buttonText, textAlign: TextAlign.center,  style: isBold ? robotoBold.copyWith(
-              color: textColor ?? (transparent ? Theme.of(context).primaryColor : Colors.white),
-              fontSize: fontSize ?? Dimensions.fontSizeLarge,
-            ) : robotoRegular.copyWith(
-              color: textColor ?? (transparent ? Theme.of(context).primaryColor : Colors.white),
-              fontSize: fontSize ?? Dimensions.fontSizeLarge,
-            )
-          ),
+          SizedBox(width: icon != null ? Dimensions.paddingSizeExtraSmall : 0),
+
+          Text(buttonText, textAlign: TextAlign.center, style: robotoBold.copyWith(
+            color: transparent ? Theme.of(context).primaryColor : fontColor ?? Theme.of(context).cardColor,
+            fontSize: fontSize ?? Dimensions.fontSizeLarge,
+          )),
+
         ]),
       ),
-    )));
+    );
   }
 }

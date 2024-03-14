@@ -21,7 +21,6 @@ class CustomDropdown<T> extends StatefulWidget {
 
   /// if true the dropdown icon will as a leading icon, default to false
   final bool leadingIcon;
-  final bool canAddValue;
   const CustomDropdown({
     super.key,
     this.hideIcon = false,
@@ -32,7 +31,6 @@ class CustomDropdown<T> extends StatefulWidget {
     this.icon,
     this.leadingIcon = false,
     this.onChange,
-    this.canAddValue = true,
   });
 
   @override
@@ -45,7 +43,7 @@ class CustomDropdownState<T> extends State<CustomDropdown<T?>>
   late OverlayEntry _overlayEntry;
   bool _isOpen = false;
   int _currentIndex = -1;
-  AnimationController? _animationController;
+  late AnimationController _animationController;
   late Animation<double> _expandAnimation;
   late Animation<double> _rotateAnimation;
 
@@ -53,14 +51,13 @@ class CustomDropdownState<T> extends State<CustomDropdown<T?>>
   void initState() {
     super.initState();
 
-    _animationController?.dispose();
     _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
     _expandAnimation = CurvedAnimation(
-      parent: _animationController!,
+      parent: _animationController,
       curve: Curves.easeInOut,
     );
     _rotateAnimation = Tween(begin: 0.0, end: 0.5).animate(CurvedAnimation(
-      parent: _animationController!,
+      parent: _animationController,
       curve: Curves.easeInOut,
     ));
   }
@@ -75,12 +72,14 @@ class CustomDropdownState<T> extends State<CustomDropdown<T?>>
         width: style.width,
         height: style.height,
         child: InkWell(
-          onTap: toggleDropdown,
+          onTap: _toggleDropdown,
           child: Padding(
             padding: const EdgeInsets.all(5),
             child: Row(
-              mainAxisAlignment: style.mainAxisAlignment ?? MainAxisAlignment.center,
-              textDirection: widget.leadingIcon ? TextDirection.rtl : TextDirection.ltr,
+              mainAxisAlignment:
+              style.mainAxisAlignment ?? MainAxisAlignment.center,
+              textDirection:
+              widget.leadingIcon ? TextDirection.rtl : TextDirection.ltr,
               mainAxisSize: MainAxisSize.max,
               children: [
                 if (_currentIndex == -1) ...[
@@ -112,67 +111,61 @@ class CustomDropdownState<T> extends State<CustomDropdown<T?>>
       // full screen GestureDetector to register when a
       // user has clicked away from the dropdown
       builder: (context) => GestureDetector(
-        onTap: () => toggleDropdown(close: true),
+        onTap: () => _toggleDropdown(close: true),
         behavior: HitTestBehavior.translucent,
         // full screen container to register taps anywhere and close drop down
         child: SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          child: Stack(
-            children: [
-              Positioned(
-                left: offset.dx,
-                top: topOffset,
-                width: widget.dropdownStyle.width ?? size.width,
-                child: CompositedTransformFollower(
-                  offset: widget.dropdownStyle.offset ?? Offset(0, size.height + 5),
-                  link: this._layerLink,
-                  showWhenUnlinked: false,
-                  child: Material(
-                    elevation: widget.dropdownStyle.elevation ?? 0,
-                    borderRadius: widget.dropdownStyle.borderRadius ?? BorderRadius.zero,
-                    color: widget.dropdownStyle.color,
-                    child: SizeTransition(
-                      axisAlignment: 1,
-                      sizeFactor: _expandAnimation,
-                      child: ConstrainedBox(
-                        constraints: widget.dropdownStyle.constraints ??
-                            BoxConstraints(
-                              maxHeight: MediaQuery.of(context).size.height -
-                                  topOffset -
-                                  15,
-                            ),
-                        child: ListView(
-                          padding: widget.dropdownStyle.padding ?? EdgeInsets.zero,
-                          shrinkWrap: true,
-                          children: widget.items.asMap().entries.map((item) {
-                            return InkWell(
-                              onTap: () {
-                                if(widget.canAddValue) {
-                                  setState(() => _currentIndex = item.key);
-                                }
-                                widget.onChange!(item.value.value, item.key);
-                                toggleDropdown();
-                              },
-                              child: item.value,
-                            );
-                          }).toList(),
-                        ),
+          child: Stack(children: [
+
+            Positioned(
+              left: offset.dx, top: topOffset,
+              width: widget.dropdownStyle.width ?? size.width,
+              child: CompositedTransformFollower(
+                offset: widget.dropdownStyle.offset ?? Offset(0, size.height + 5),
+                link: this._layerLink,
+                showWhenUnlinked: false,
+                child: Material(
+                  elevation: widget.dropdownStyle.elevation ?? 0,
+                  borderRadius: widget.dropdownStyle.borderRadius ?? BorderRadius.zero,
+                  color: widget.dropdownStyle.color,
+                  child: SizeTransition(
+                    axisAlignment: 1,
+                    sizeFactor: _expandAnimation,
+                    child: ConstrainedBox(constraints: widget.dropdownStyle.constraints ?? BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height - topOffset - 15,
+                    ),
+                      child: ListView(
+                        padding:
+                        widget.dropdownStyle.padding ?? EdgeInsets.zero,
+                        shrinkWrap: true,
+                        children: widget.items.asMap().entries.map((item) {
+                          return InkWell(
+                            onTap: () {
+                              setState(() => _currentIndex = item.key);
+                              widget.onChange!(item.value.value, item.key);
+                              _toggleDropdown();
+                            },
+                            child: item.value,
+                          );
+                        }).toList(),
                       ),
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+
+          ]),
         ),
       ),
     );
   }
 
-  void toggleDropdown({bool close = false}) async {
+  void _toggleDropdown({bool close = false}) async {
     if (_isOpen || close) {
-      await _animationController!.reverse();
+      await _animationController.reverse();
       this._overlayEntry.remove();
       setState(() {
         _isOpen = false;
@@ -181,7 +174,7 @@ class CustomDropdownState<T> extends State<CustomDropdown<T?>>
       this._overlayEntry = this._createOverlayEntry();
       Overlay.of(context).insert(this._overlayEntry);
       setState(() => _isOpen = true);
-      _animationController!.forward();
+      _animationController.forward();
     }
   }
 }

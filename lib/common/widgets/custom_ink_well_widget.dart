@@ -14,11 +14,10 @@ class CustomInkWellWidget extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(radius ?? 0.0),
-        highlightColor: highlightColor ?? Theme.of(context).primaryColor.withOpacity(0.1),
-        hoverColor: Theme.of(context).primaryColor.withOpacity(0.05),
+        highlightColor: highlightColor ?? Theme.of(context).hintColor.withOpacity(0.2),
+        hoverColor: Theme.of(context).hintColor.withOpacity(0.5),
         child: child,
       ),
     );
   }
 }
-
