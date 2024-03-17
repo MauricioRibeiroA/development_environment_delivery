@@ -29,7 +29,7 @@
 
     <application
         tools:replace="android:label"
-        android:label="Pede Logo Entregador"
+        android:label="PedeLogo Entregador"
         android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">

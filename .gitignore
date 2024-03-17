@@ -35,7 +35,6 @@ changed_files.zip
 get_changed_files.sh
 
 # Web related
-lib/generated_plugin_registrant.dart
 
 # Symbolication related
 app.*.symbols
