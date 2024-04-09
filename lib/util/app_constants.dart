@@ -69,6 +69,6 @@ class AppConstants {
   static const String langIntro = 'language_intro';
 
   static List<LanguageModel> languages = [
-    LanguageModel(imageUrl: Images.english, languageName: 'English', countryCode: 'US', languageCode: 'en'),
+    LanguageModel(imageUrl: Images.english, languageName: 'Portugues', countryCode: 'US', languageCode: 'en'),
   ];
 }
